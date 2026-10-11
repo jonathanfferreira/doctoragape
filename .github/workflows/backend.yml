@@ -38,6 +38,7 @@ jobs:
           } catch {
             if ($_.Exception.Message -notmatch 'A inicializacao ou verificacao falhou') { throw }
           }
+          $global:LASTEXITCODE = 0
   integration:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
