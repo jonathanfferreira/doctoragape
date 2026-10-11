@@ -30,3 +30,13 @@ Reproduzir: `python3 infrastructure/local/start.py --restart-check`, com Docker 
 O script PowerShell foi preparado para Windows, mas não foi executado no computador do usuário. O CI roda os contêineres Linux e o mesmo procedimento Python.
 
 Não foram validados conformidade regulatória, autenticação da interface própria, autorização por perfil, conexão entre interface e backend, isolamento entre clínicas, backup/restauração, WhatsApp, pagamentos, exportações dos fornecedores ou desempenho com 6000 clientes. O armazenamento validado acima restringe-se aos registros fictícios e ao reinício dos contêineres.
+
+## Recuperação do Docker no Windows
+Validação da atualização: https://github.com/jonathanfferreira/doctoragape/actions/runs/38141574785
+
+- Oito testes de recuperação passaram em Linux e Windows, com processos Docker simulados: servidor pronto, reinício bem-sucedido, abertura alternativa do Desktop, timeout/falha com diagnóstico, ausência de Docker, versão de servidor vazia, comando opcional indisponível e saída WSL UTF-16.
+- DOCKER_API_VERSION é removida apenas do ambiente dos subprocessos; a configuração do usuário permanece intacta.
+- Windows PowerShell 5.1 analisou e executou o inicializador com Python simulado, verificando argumentos e mensagem de falha sem problemas de codificação.
+- Instalação limpa e persistência do backend foram repetidas com sucesso em Linux usando o inicializador atualizado.
+
+Isso não reproduz nem comprova reparo do erro 500 no computador do usuário. Docker Desktop/WSL reais nesse computador ainda precisam ser verificados pela execução local e, se necessário, por docker-diagnostics.txt. A recuperação não remove volumes nem redefine WSL.
