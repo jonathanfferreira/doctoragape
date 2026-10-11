@@ -1,0 +1,99 @@
+name: doctor-agape-local
+x-frappe: &frappe
+  image: doctor-agape/frappe-dev:15-local
+  build:
+    context: ../..
+    dockerfile: infrastructure/local/Dockerfile
+  volumes:
+    - frappe-sites:/home/frappe/frappe-bench/sites
+  depends_on:
+    init-frappe:
+      condition: service_completed_successfully
+services:
+  mariadb:
+    image: mariadb:10.6
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Run configure.py first}
+    command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci","--skip-character-set-client-handshake"]
+    volumes: [mariadb-data:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD","healthcheck.sh","--connect","--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  frappe-cache:
+    image: redis:7-alpine
+  frappe-queue:
+    image: redis:7-alpine
+    volumes: [frappe-queue-data:/data]
+  init-frappe:
+    <<: *frappe
+    command: ["bash","/opt/agape/init-frappe.sh"]
+    environment:
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Run configure.py first}
+      FRAPPE_ADMIN_PASSWORD: ${FRAPPE_ADMIN_PASSWORD:?Run configure.py first}
+    depends_on:
+      mariadb: {condition: service_healthy}
+      frappe-cache: {condition: service_started}
+      frappe-queue: {condition: service_started}
+  frappe-web:
+    <<: *frappe
+    command: ["bench","serve","--port","8000"]
+    ports: ["127.0.0.1:8000:8000"]
+  frappe-worker:
+    <<: *frappe
+    command: ["bench","worker","--queue","short,default,long"]
+  frappe-scheduler:
+    <<: *frappe
+    command: ["bench","schedule"]
+  frappe-websocket:
+    <<: *frappe
+    command: ["node","apps/frappe/socketio.js"]
+    ports: ["127.0.0.1:9000:9000"]
+  chatwoot-db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: chatwoot
+      POSTGRES_USER: chatwoot
+      POSTGRES_PASSWORD: ${CHATWOOT_DB_PASSWORD:?Run configure.py first}
+    volumes: [chatwoot-db-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U chatwoot -d chatwoot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  chatwoot-redis:
+    image: redis:7-alpine
+    command: ["redis-server","--requirepass","${CHATWOOT_REDIS_PASSWORD:?Run configure.py first}"]
+    volumes: [chatwoot-redis-data:/data]
+  init-chatwoot:
+    image: chatwoot/chatwoot:v4.18.0
+    env_file: .chatwoot.env
+    command: ["bundle","exec","rails","db:chatwoot_prepare"]
+    volumes: [chatwoot-storage:/app/storage]
+    depends_on:
+      chatwoot-db: {condition: service_healthy}
+      chatwoot-redis: {condition: service_started}
+  chatwoot-web:
+    image: chatwoot/chatwoot:v4.18.0
+    env_file: .chatwoot.env
+    entrypoint: docker/entrypoints/rails.sh
+    command: ["bundle","exec","rails","s","-p","3000","-b","0.0.0.0"]
+    volumes: [chatwoot-storage:/app/storage]
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      init-chatwoot: {condition: service_completed_successfully}
+  chatwoot-worker:
+    image: chatwoot/chatwoot:v4.18.0
+    env_file: .chatwoot.env
+    command: ["bundle","exec","sidekiq","-C","config/sidekiq.yml"]
+    volumes: [chatwoot-storage:/app/storage]
+    depends_on:
+      init-chatwoot: {condition: service_completed_successfully}
+volumes:
+  frappe-sites:
+  mariadb-data:
+  frappe-queue-data:
+  chatwoot-db-data:
+  chatwoot-redis-data:
+  chatwoot-storage:

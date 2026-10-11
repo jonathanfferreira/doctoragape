@@ -1,0 +1,10 @@
+{
+  "verified_on": "2026-10-11",
+  "status": "candidate-for-integration-test",
+  "sources": [
+    {"name":"frappe","repository":"https://github.com/frappe/frappe.git","ref":"version-15","version":"15.122.0","commit":"b0b5b99a1d9d2cb3d54b32293d3854bf2c15f4a4","license":"MIT"},
+    {"name":"erpnext","repository":"https://github.com/frappe/erpnext.git","ref":"version-15","version":"15.122.0","commit":"bfd8100d42162048248b7b947f2e21fdf7999a91","license":"GPL-3.0"},
+    {"name":"healthcare","repository":"https://github.com/earthians/marley.git","ref":"version-15","version":"15.2.4","commit":"41f05060a69fbefe0f91ddad8989ab8442eec1c6","license":"GPL-3.0"},
+    {"name":"chatwoot","repository":"https://github.com/chatwoot/chatwoot.git","ref":"v4.18.0","version":"4.18.0","commit":"9f920b549c14491a4e587687a3eed5d21c6ccc7d","license":"MIT outside enterprise; separate enterprise license"}
+  ]
+}
