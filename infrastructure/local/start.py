@@ -53,7 +53,7 @@ def main():
         compose("restart", "mariadb", "frappe-web")
         wait_http()
         compose("exec", "-T", "frappe-web", "bench", "--site", "agape.localhost",
-                "execute", "healthcare.agape_smoke.run", "--kwargs", '{"verify_only":true}')
+                "execute", "healthcare.agape_smoke.run", "--kwargs", '{"verify_only": True}')
     print("Local fictional backend probe passed. No payment or message was sent.")
     print("Frappe: http://agape.localhost:8000 | Chatwoot: http://localhost:3000")
     print("Frontend is not connected yet; local credentials are in .env.")
