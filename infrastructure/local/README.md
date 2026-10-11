@@ -38,3 +38,14 @@ Não usar down -v para pausar: remove os volumes e dados.
 https://github.com/frappe/frappe_docker/blob/main/devcontainer-example/docker-compose.yml
 https://github.com/earthians/marley/blob/version-15/.github/workflows/ci.yml
 https://github.com/chatwoot/chatwoot/blob/v4.18.0/docker-compose.production.yaml
+
+## Windows
+Instalar Docker Desktop com backend WSL2 e Python 3. Esta sessão não instala programas no seu computador.
+No PowerShell, dentro desta pasta:
+powershell -ExecutionPolicy Bypass -File .\start-windows.ps1
+
+O script verifica Docker, gera credenciais se não existirem, compila, inicializa e executa um fluxo fictício. Reinicia MariaDB/Frappe e confirma a permanência dos registros. Não sobrescreve senhas existentes, não limpa volumes e não envia mensagens nem pagamentos.
+O teste cria empresa fictícia, paciente, profissional, consulta, evolução em rascunho e fatura em rascunho. É exclusivo do site agape.localhost, não aplica regras de prontuário ou contabilidade brasileira de produção.
+
+Em Linux/macOS, executar python3 start.py --restart-check.
+O workflow Backend installation and persistence testa o mesmo procedimento no GitHub Actions.

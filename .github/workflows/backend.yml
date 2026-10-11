@@ -1,0 +1,36 @@
+name: Backend installation and persistence
+on:
+  push:
+    paths: ['infrastructure/**', 'scripts/**', '.dockerignore', '.github/workflows/backend.yml']
+  pull_request:
+    paths: ['infrastructure/**', 'scripts/**', '.dockerignore', '.github/workflows/backend.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create ephemeral local credentials
+        run: |
+          python3 infrastructure/local/configure.py
+          python3 - <<'PY'
+          from pathlib import Path
+          for line in Path('infrastructure/local/.env').read_text().splitlines():
+              print('::add-mask::' + line.split('=',1)[1])
+          PY
+      - name: Install and exercise fictional clinical workflow
+        run: python3 infrastructure/local/start.py --restart-check
+      - name: List running services
+        if: always()
+        working-directory: infrastructure/local
+        run: docker compose ps -a
+      - name: Clean up runner
+        if: always()
+        working-directory: infrastructure/local
+        run: docker compose down

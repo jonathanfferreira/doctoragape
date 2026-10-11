@@ -21,7 +21,8 @@ RUN bench init --frappe-path /opt/upstream/frappe --frappe-branch version-15 --p
  && cd frappe-bench \
  && bench get-app --skip-assets erpnext /opt/upstream/erpnext \
  && bench get-app --skip-assets healthcare /opt/upstream/healthcare \
- && bench build
+ && bench build \
+ && cp -a sites/assets /home/frappe/agape-build-assets
 WORKDIR /home/frappe/frappe-bench
 COPY --chown=frappe:frappe infrastructure/local/init-frappe.sh /opt/agape/init-frappe.sh
 CMD ["bench","serve","--port","8000"]
