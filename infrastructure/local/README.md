@@ -1,6 +1,6 @@
 # Ambiente local Doctor Ágape
 
-Configuração preparada, ainda não executada com Docker nesta sessão. Não é implantação de produção. As tags de imagens-base podem mudar; os commits das aplicações Frappe são fixados no lock. PDFs com wkhtmltopdf e integrações externas não fazem parte desta etapa.
+Instalação limpa verificada no GitHub Actions com Docker em Linux, incluindo um fluxo clínico fictício e persistência após reiniciar MariaDB/Frappe. O script PowerShell está preparado para Windows, mas não foi executado no computador do usuário. Não é implantação de produção. As tags de imagens-base podem mudar; os commits das aplicações Frappe são fixados no lock. PDFs com wkhtmltopdf e integrações externas não fazem parte desta etapa.
 
 Requisitos: Docker Engine/Desktop com Compose v2, internet para builds e Python 3 para gerar arquivos locais de configuração. Reserve espaço para imagens e volumes; ajustar recursos após medir a instalação. O build compila as aplicações e pode demorar.
 
@@ -31,7 +31,7 @@ Não usar down -v para pausar: remove os volumes e dados.
 - Chatwoot não está vinculado ao cadastro Frappe; próxima etapa é adaptador autenticado.
 - Não configuramos WhatsApp, pagamentos, e-mail, produção, TLS ou prontuário regulatório.
 - Initializers não reinstalam sites existentes; falhas parciais devem ser diagnosticadas pelos logs.
-- Teste seguinte: criar paciente no Marley, consulta e atendimento, provar persistência; depois vincular faturamento e contatos Chatwoot.
+- Próxima etapa: autenticar e conectar a interface ao cadastro/agenda/atendimento; vincular benefícios e contatos Chatwoot depois. O teste atual confirma criação de registros e fatura em rascunho, sem validar permissões de usuários ou contabilidade de produção.
 - Credenciais .env e .chatwoot.env são ignoradas pelo Git. Não enviar em chat nem publicar.
 
 ## Referências
@@ -41,8 +41,15 @@ https://github.com/chatwoot/chatwoot/blob/v4.18.0/docker-compose.production.yaml
 
 ## Windows
 Instalar Docker Desktop com backend WSL2 e Python 3. Esta sessão não instala programas no seu computador.
-No PowerShell, dentro desta pasta:
+No PowerShell, clone o repositório e execute:
+
+```powershell
+git clone https://github.com/jonathanfferreira/doctoragape.git
+cd doctoragape\infrastructure\local
 powershell -ExecutionPolicy Bypass -File .\start-windows.ps1
+```
+
+Se o repositório já estiver clonado, execute apenas a última linha dentro de infrastructure/local. Git também precisa estar instalado para o clone.
 
 O script verifica Docker, gera credenciais se não existirem, compila, inicializa e executa um fluxo fictício. Reinicia MariaDB/Frappe e confirma a permanência dos registros. Não sobrescreve senhas existentes, não limpa volumes e não envia mensagens nem pagamentos.
 O teste cria empresa fictícia, paciente, profissional, consulta, evolução em rascunho e fatura em rascunho. É exclusivo do site agape.localhost, não aplica regras de prontuário ou contabilidade brasileira de produção.

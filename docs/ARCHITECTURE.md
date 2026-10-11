@@ -3,9 +3,9 @@
 Status: protótipo de UX React/Vite, exclusivamente fictício e em memória. Sem login, persistência, assinatura, cobrança ou conexão externa. Não utilizar em atendimento real.
 
 ## Componentes candidatos
-Frappe/ERPNext para gestão, Marley/Frappe Health para clínica, Chatwoot para comunicação, módulo próprio de benefícios e avaliação específica SST/eSocial. Nenhum desses componentes está instalado neste protótipo.
+Frappe/ERPNext para gestão, Marley/Frappe Health para clínica, Chatwoot para comunicação, módulo próprio de benefícios e avaliação específica SST/eSocial. A base Docker separada instala ERPNext/Marley e Chatwoot, com versões documentadas no lock. O protótipo de interface ainda não está conectado a ela.
 
-Validar versões, manutenção e licenças nos repositórios antes de incorporar código. ERPNext GPLv3 e Frappe MIT precisam de confirmação na versão adotada; verificar licença do Marley e separar Chatwoot comunitário/empresarial.
+Versões e licenças verificadas nos commits registrados: Frappe MIT, ERPNext/Marley GPLv3 e Chatwoot MIT fora da área enterprise. Reavaliar compatibilidade e obrigações de distribuição ao atualizar ou incorporar código.
 
 ## Produção
 Recomenda-se avaliar um site/banco Frappe por clínica. Isolar usuários, anexos, backups, chaves e integrações. Backend próprio coordena adaptadores e identidade comum do paciente. API é a integração padrão, MCP é uma camada opcional posterior.
@@ -17,4 +17,4 @@ Migração por APIs/exportações autorizadas: preservar identificadores de orig
 Mensagens do Chatwoot não são convertidas automaticamente em prontuário. Minimizar dados clínicos nos canais de comunicação.
 
 ## Próxima fase
-Validar fluxo com equipe, instalar versões compatíveis de ERPNext/Marley em ambiente dedicado e provar cadastro-agendamento-atendimento-financeiro com dados fictícios. Só depois integrar fornecedores e preparar piloto com autenticação e armazenamento adequado.
+Conectar a interface ao backend por APIs autenticadas, definir perfis e testar autorização. A instalação automatizada já verifica empresa/cliente/paciente/profissional/agendamento/atendimento/fatura em rascunho e permanência após reiniciar o banco. Validar os fluxos com a equipe, testar backups e isolamento antes de integrar fornecedores e preparar piloto clínico.

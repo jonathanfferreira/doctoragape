@@ -14,8 +14,8 @@ Teste de fluxos: instalar Chromium com npx playwright install chromium, iniciar 
 Recepção, agenda, consulta de paciente, elegibilidade ilustrativa, evolução fictícia e recebimentos simulados. Dados em memória; recarregar descarta alterações. Sem login, assinatura, dados reais ou integração externa.
 
 ## Backend
-Seguir infrastructure/local/README.md para o ambiente Docker de ERPNext/Marley e Chatwoot. Os arquivos foram preparados e analisados; instalação Docker ainda não executada.
-Fontes e commits candidatos em infrastructure/open-source/sources.lock.json.
+Seguir infrastructure/local/README.md para o ambiente Docker de ERPNext/Marley e Chatwoot. Instalação limpa e persistência de registros fictícios verificadas no GitHub Actions. Para Windows, o script `infrastructure/local/start-windows.ps1` inicializa e testa o ambiente usando Docker Desktop/WSL2 e Python 3 já instalados. Não foi executado no computador do usuário.
+Fontes e commits fixados em infrastructure/open-source/sources.lock.json.
 Arquitetura em docs/ARCHITECTURE.md.
 
 ## Origem e licenças
@@ -24,4 +24,4 @@ Logotipo da Doctor Ágape obtido do site oficial para este projeto. Não concede
 ERPNext/Marley são GPLv3; Chatwoot tem MIT fora de enterprise. Ver avisos upstream antes de incorporar/distribuir. O projeto próprio ainda não definiu uma licença de distribuição.
 
 ## Estado
-Primeira fase: validar UX com a equipe e executar instalação limpa, persistência, isolamento e restauração do backend local. A interface ainda não se conecta aos servidores Docker.
+Próxima fase: conectar o protótipo ao backend com autenticação e permissões; validar UX com a equipe, isolamento e restauração de backups. A interface ainda não se conecta aos servidores Docker.
