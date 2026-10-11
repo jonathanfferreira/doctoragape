@@ -14,16 +14,16 @@ root = Path(__file__).resolve().parent
 def compose(*args):
     subprocess.run(["docker", "compose", *args], cwd=root, check=True)
 
-def wait_http(timeout=180):
+def wait_http(url="http://localhost:8000/api/method/ping", timeout=180):
     end = time.monotonic() + timeout
     while time.monotonic() < end:
         try:
-            with urlopen("http://localhost:8000/api/method/ping", timeout=5) as response:
+            with urlopen(url, timeout=5) as response:
                 if response.status == 200:
                     return
         except (URLError, TimeoutError, OSError):
             time.sleep(3)
-    raise RuntimeError("Frappe did not become ready. Inspect docker compose logs.")
+    raise RuntimeError(f"Service at {url} did not become ready. Inspect docker compose logs.")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -44,6 +44,7 @@ def main():
         compose("build")
     compose("up", "-d")
     wait_http()
+    wait_http("http://localhost:3000/")
     compose("cp", str(root / "backend_smoke.py"),
             "frappe-web:/home/frappe/frappe-bench/apps/healthcare/healthcare/agape_smoke.py")
     compose("exec", "-T", "frappe-web", "bench", "--site", "agape.localhost",

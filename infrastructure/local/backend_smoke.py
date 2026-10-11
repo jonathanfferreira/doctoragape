@@ -20,6 +20,14 @@ def run(verify_only=False):
         return {"persisted": True, "checked_doctypes": list(state)}
     if evidence.exists():
         return run(verify_only=True)
+    # Use ERPNext's own setup presets on this fictional development site.
+    # These establish groups, units and warehouse types required by Company.
+    from erpnext.setup.setup_wizard.operations.install_fixtures import install as install_presets
+    install_presets("Brazil")
+    for doctype, name in (("Warehouse Type", "Transit"), ("Customer Group", "Individual"),
+                          ("Territory", "Brazil"), ("UOM", "Nos"), ("Party Type", "Customer")):
+        if not frappe.db.exists(doctype, name):
+            raise RuntimeError(f"ERPNext setup preset missing: {doctype} / {name}")
     state = {}
     company_name = "Doctor Agape DEMO"
     company = frappe.db.exists("Company", company_name)
@@ -48,8 +56,8 @@ def run(verify_only=False):
     settings.show_payment_popup = 0
     settings.collect_registration_fee = 0
     settings.save()
-    group = frappe.db.get_value("Customer Group", {"is_group": 0}, "name")
-    territory = frappe.db.get_value("Territory", {}, "name")
+    group = "Individual"
+    territory = "Brazil"
     customer = frappe.get_doc({
         "doctype": "Customer", "customer_name": "Paciente Ficticio DEMO",
         "customer_type": "Individual", "customer_group": group, "territory": territory
@@ -88,8 +96,8 @@ def run(verify_only=False):
     state["Patient Encounter"] = encounter.name
     item_code = "AGAPE-DEMO-CONSULTA"
     if not frappe.db.exists("Item", item_code):
-        item_group = frappe.db.get_value("Item Group", {"is_group": 0}, "name")
-        uom = frappe.db.get_value("UOM", {}, "name")
+        item_group = "Services"
+        uom = "Nos"
         frappe.get_doc({"doctype": "Item", "item_code": item_code,
                         "item_name": "Consulta ficticia de demonstracao", "item_group": item_group,
                         "stock_uom": uom, "is_stock_item": 0}).insert()
