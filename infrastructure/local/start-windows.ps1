@@ -8,8 +8,8 @@ if (Get-Command py -ErrorAction SilentlyContinue) {
 } elseif (Get-Command python -ErrorAction SilentlyContinue) {
     & python start.py --restart-check
 } else {
-    throw "Python 3 não encontrado. Instale Python 3 antes de continuar."
+    throw "Python 3 nao encontrado. Instale Python 3 antes de continuar."
 }
 if ($LASTEXITCODE -ne 0) {
-    throw "A inicialização ou verificação falhou. Consulte a mensagem anterior e os logs do Docker."
+    throw "A inicializacao ou verificacao falhou. Consulte a mensagem anterior e os logs do Docker."
 }

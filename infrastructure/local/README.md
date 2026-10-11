@@ -56,3 +56,14 @@ O teste cria empresa fictícia, paciente, profissional, consulta, evolução em 
 
 Em Linux/macOS, executar python3 start.py --restart-check.
 O workflow Backend installation and persistence testa o mesmo procedimento no GitHub Actions.
+
+## Recuperação do Docker no Windows
+O inicializador verifica o servidor Docker, tenta reiniciar o Docker Desktop quando ele não responde e aguarda até três minutos. O reinício pode interromper outros contêineres locais. Ele não redefine WSL, reinstala programas nem remove volumes.
+Se houver DOCKER_API_VERSION definida, a execução ignora essa variável apenas nos subprocessos para permitir negociação automática, sem alterar a configuração do Windows.
+Se o mecanismo continuar indisponível, salva docker-diagnostics.txt nesta pasta (ignorado pelo Git), com estado do WSL e versões/contexto Docker. Não coleta arquivos .env ou logs de aplicações. O diagnóstico não significa que a instalação foi concluída.
+
+Atualizar uma cópia existente e tentar novamente no PowerShell, dentro desta pasta:
+```powershell
+git pull --ff-only
+powershell -ExecutionPolicy Bypass -File .\start-windows.ps1
+```

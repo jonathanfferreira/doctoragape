@@ -1,9 +1,9 @@
 name: Backend installation and persistence
 on:
   push:
-    paths: ['infrastructure/**', 'scripts/**', '.dockerignore', '.github/workflows/backend.yml']
+    paths: ['infrastructure/**', 'scripts/**', 'tests/infrastructure/**', '.dockerignore', '.github/workflows/backend.yml']
   pull_request:
-    paths: ['infrastructure/**', 'scripts/**', '.dockerignore', '.github/workflows/backend.yml']
+    paths: ['infrastructure/**', 'scripts/**', 'tests/infrastructure/**', '.dockerignore', '.github/workflows/backend.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,11 +11,40 @@ concurrency:
   group: backend-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  windows-launcher:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Docker readiness recovery
+        run: python -m unittest discover -s tests/infrastructure -v
+      - name: Validate Windows PowerShell launcher
+        shell: powershell
+        run: |
+          $path = Join-Path $env:GITHUB_WORKSPACE 'infrastructure/local/start-windows.ps1'
+          $tokens = $null
+          $errors = $null
+          $null = [System.Management.Automation.Language.Parser]::ParseFile($path, [ref]$tokens, [ref]$errors)
+          if ($errors.Count) { throw ($errors | Out-String) }
+          if ((Get-Content $path -Raw) -match '[^\x00-\x7F]') { throw 'Launcher must be ASCII for Windows PowerShell 5.1.' }
+          function docker { }
+          function py { $global:LASTEXITCODE = 0; $global:AgapeArgs = $args }
+          & $path
+          if ("$global:AgapeArgs" -ne '-3 start.py --restart-check') { throw 'Wrong Python arguments.' }
+          function py { $global:LASTEXITCODE = 1 }
+          try {
+            & $path
+            throw 'Expected launcher failure.'
+          } catch {
+            if ($_.Exception.Message -notmatch 'A inicializacao ou verificacao falhou') { throw }
+          }
   integration:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Test Docker readiness recovery
+        run: python3 -m unittest discover -s tests/infrastructure -v
       - name: Create ephemeral local credentials
         run: |
           python3 infrastructure/local/configure.py

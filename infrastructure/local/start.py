@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """Start and verify the local development backend; never install host software."""
 import argparse
-import shutil
 import subprocess
 import sys
 import time
 from pathlib import Path
 from urllib.request import urlopen
 from urllib.error import URLError
+from docker_ready import ensure_docker, DockerNotReady
 
 root = Path(__file__).resolve().parent
+docker_env = None
 
 def compose(*args):
-    subprocess.run(["docker", "compose", *args], cwd=root, check=True)
+    subprocess.run(["docker", "compose", *args], cwd=root, env=docker_env, check=True)
 
 def wait_http(url="http://localhost:8000/api/method/ping", timeout=180):
     end = time.monotonic() + timeout
@@ -26,14 +27,16 @@ def wait_http(url="http://localhost:8000/api/method/ping", timeout=180):
     raise RuntimeError(f"Service at {url} did not become ready. Inspect docker compose logs.")
 
 def main():
+    global docker_env
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-build", action="store_true")
     parser.add_argument("--restart-check", action="store_true")
     args = parser.parse_args()
-    if not shutil.which("docker"):
-        raise SystemExit("Docker not found. On Windows install/start Docker Desktop with WSL2 first.")
-    subprocess.run(["docker", "info"], stdout=subprocess.DEVNULL, check=True)
-    subprocess.run(["docker", "compose", "version"], check=True)
+    try:
+        docker_env = ensure_docker(root)
+    except DockerNotReady as exc:
+        raise SystemExit(str(exc)) from None
+    subprocess.run(["docker", "compose", "version"], env=docker_env, check=True)
     existing = [(root / file).exists() for file in (".env", ".chatwoot.env")]
     if any(existing) and not all(existing):
         raise SystemExit("Partial local configuration found. Resolve it without replacing existing passwords.")

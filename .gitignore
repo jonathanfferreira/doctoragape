@@ -6,3 +6,4 @@ dist/
 .chatwoot.env
 __pycache__/
 *.log
+infrastructure/local/docker-diagnostics.txt
