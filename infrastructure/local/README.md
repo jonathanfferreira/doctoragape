@@ -12,7 +12,7 @@ Execute a partir desta pasta:
 5. docker compose logs -f init-frappe init-chatwoot
 
 Frappe: http://agape.localhost:8000. Login Administrator e senha FRAPPE_ADMIN_PASSWORD no .env local. Se o navegador não resolver agape.localhost, testar localhost:8000: o site padrão foi definido com bench use.
-Chatwoot: http://localhost:3000. Criar conta local de teste. Cadastro aberto é exclusivo desta configuração local.
+Chatwoot: http://localhost:3000. Criar conta local de teste. Cadastro aberto é exclusivo desta configuração local: em produção, partir de `chatwoot.env.production.example` (cadastro fechado, TLS obrigatório) e nunca reutilizar o arquivo gerado para desenvolvimento.
 
 Verificar módulos instalados:
 docker compose exec frappe-web bench --site agape.localhost list-apps

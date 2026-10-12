@@ -11,7 +11,7 @@ Abrir http://localhost:5173.
 Verificação: npm run typecheck e npm run build.
 Teste de fluxos: instalar Chromium com npx playwright install chromium, iniciar a interface e executar npm run test:flows.
 
-Recepção, agenda, consulta de paciente, elegibilidade ilustrativa, evolução fictícia e recebimentos simulados. Dados em memória; recarregar descarta alterações. Sem login, assinatura, dados reais ou integração externa.
+Recepção, agenda, consulta de paciente, elegibilidade ilustrativa, evolução fictícia e recebimentos simulados. Dados em memória; recarregar descarta alterações. Login simulado com perfis de demonstração (recepção, clínico, financeiro e administrador) restringe os módulos visíveis, mas não há autenticação real: sem sessão persistente, assinatura, dados reais ou integração externa.
 
 ## Backend
 Seguir infrastructure/local/README.md para o ambiente Docker de ERPNext/Marley e Chatwoot. Instalação limpa e persistência de registros fictícios verificadas no GitHub Actions. Para Windows, o script `infrastructure/local/start-windows.ps1` inicializa e testa o ambiente usando Docker Desktop/WSL2 e Python 3 já instalados. Não foi executado no computador do usuário.
