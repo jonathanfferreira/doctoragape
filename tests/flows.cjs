@@ -3,7 +3,7 @@ const {chromium}=require('../app/node_modules/playwright');
 const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH ? {executablePath:process.env.CHROMIUM_PATH} : {}),args:['--no-sandbox']});
 const page=await browser.newPage({viewport:{width:1440,height:1000}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
-await page.goto(process.env.BASE_URL || 'http://localhost:5173/');await page.getByRole('heading',{name:'Tudo pronto para atender.'}).waitFor();
+await page.goto(process.env.BASE_URL || 'http://localhost:5173/');await page.getByLabel('E-mail de demonstração').fill('admin@demo.local');await page.getByLabel('Senha',{exact:true}).fill('demo');await page.getByRole('button',{name:'Entrar',exact:true}).click();await page.getByRole('heading',{name:'Tudo pronto para atender.'}).waitFor();
 await page.waitForTimeout(1500);await page.getByLabel('Buscar paciente',{exact:true}).fill('Beatriz');await page.waitForFunction(()=>document.querySelectorAll('.appointment').length===1);
 await page.locator('.appointment').click();await page.getByRole('button',{name:'Fazer check-in',exact:true}).click();await page.getByRole('button',{name:'Iniciar atendimento',exact:true}).click();await page.getByRole('button',{name:'Abrir evolução'}).click();
 await page.getByLabel('Evolução do atendimento').fill('Anotação fictícia para testar o rascunho.');await page.getByRole('button',{name:'Guardar rascunho'}).click();await page.locator('.draft').waitFor();

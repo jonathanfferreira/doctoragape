@@ -1,6 +1,6 @@
 # Doctor Ágape: arquitetura inicial
 
-Status: protótipo de UX React/Vite, exclusivamente fictício e em memória. Sem login, persistência, assinatura, cobrança ou conexão externa. Não utilizar em atendimento real.
+Status: protótipo de UX React/Vite, exclusivamente fictício e em memória. Login simulado com perfis fictícios restringe os módulos por perfil (recepção, clínico, financeiro e administrador); ainda não há autenticação real nem persistência, assinatura, cobrança ou conexão externa. Não utilizar em atendimento real.
 
 ## Componentes candidatos
 Frappe/ERPNext para gestão, Marley/Frappe Health para clínica, Chatwoot para comunicação, módulo próprio de benefícios e avaliação específica SST/eSocial. A base Docker separada instala ERPNext/Marley e Chatwoot, com versões documentadas no lock. O protótipo de interface ainda não está conectado a ela.

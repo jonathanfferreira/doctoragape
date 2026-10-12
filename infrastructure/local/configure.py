@@ -15,6 +15,9 @@ def write_private(name, text):
         output.write(text)
 write_private(".env", "".join(f"{key}={value}\n" for key,value in values.items()))
 write_private(".chatwoot.env", "\n".join([
+    "# DEV ONLY: local environment values. Account signup stays open and TLS is",
+    "# disabled so the first local account can be created. These values are NOT",
+    "# valid for production: use infrastructure/local/chatwoot.env.production.example.",
     "RAILS_ENV=production", "NODE_ENV=production", "INSTALLATION_ENV=docker",
     "FRONTEND_URL=http://localhost:3000", "FORCE_SSL=false",
     "ENABLE_ACCOUNT_SIGNUP=true", "POSTGRES_HOST=chatwoot-db",
@@ -26,3 +29,5 @@ write_private(".chatwoot.env", "\n".join([
     "DEFAULT_LOCALE=pt_BR", ""
 ]))
 print("Local configuration created. Credentials remain in .env; no values printed.")
+print("The generated .chatwoot.env is DEV ONLY (open signup, no TLS).")
+print("For a real deployment, start from chatwoot.env.production.example.")
